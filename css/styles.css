@@ -1,0 +1,47 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+}
+
+.slide {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  padding: 6vmin;
+  visibility: hidden;
+}
+
+.slide.is-active {
+  visibility: visible;
+}
+
+.deck-status {
+  position: fixed;
+  right: 2rem;
+  bottom: 1.5rem;
+  margin: 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
