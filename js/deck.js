@@ -35,12 +35,13 @@
     });
 
     index = target;
+    document.documentElement.dataset.gel = to.dataset.gel || 'house';
     currentEl.textContent = index + 1;
     announcer.textContent = to.getAttribute('aria-label');
     history.replaceState(null, '', `#${to.id}`);
 
     document.dispatchEvent(
-      new CustomEvent('deck:change', { detail: { from, to, direction } })
+      new CustomEvent('deck:change', {detail: {from, to, direction}})
     );
   }
 

@@ -1,3 +1,61 @@
+:root {
+  --color-light: #fbf4ee;
+  --color-haze: #d4cbd6;
+
+  --gel-house: #ffd9a0;
+  --gel-magenta: #ff4fa3;
+  --gel-amber: #ffb23f;
+  --gel-teal: #3cd5c3;
+  --gel-violet: #9b7bff;
+  --gel-lime: #c6f05a;
+
+  --stage-house: #17141f;
+  --stage-magenta: #1e1028;
+  --stage-amber: #22170e;
+  --stage-teal: #0d1f1e;
+  --stage-violet: #18142b;
+  --stage-lime: #161f0e;
+
+  --gel: var(--gel-house);
+  --stage: var(--stage-house);
+
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, sans-serif;
+
+  --text-body: clamp(1.75rem, 1.4rem + 0.9vw, 2.25rem);
+  --text-lead: clamp(2.25rem, 1.6rem + 1.6vw, 3.25rem);
+  --text-heading: clamp(3.5rem, 2rem + 4vw, 6.5rem);
+  --text-display: clamp(4.5rem, 1.5rem + 8vw, 11rem);
+
+  --space-gutter: clamp(2rem, 5vw, 6rem);
+  --space-stack: clamp(1.5rem, 1rem + 1.5vw, 3rem);
+}
+
+[data-gel="magenta"] {
+  --gel: var(--gel-magenta);
+  --stage: var(--stage-magenta);
+}
+
+[data-gel="amber"] {
+  --gel: var(--gel-amber);
+  --stage: var(--stage-amber);
+}
+
+[data-gel="teal"] {
+  --gel: var(--gel-teal);
+  --stage: var(--stage-teal);
+}
+
+[data-gel="violet"] {
+  --gel: var(--gel-violet);
+  --stage: var(--stage-violet);
+}
+
+[data-gel="lime"] {
+  --gel: var(--gel-lime);
+  --stage: var(--stage-lime);
+}
+
 *,
 *::before,
 *::after {
@@ -12,14 +70,88 @@ body {
 
 body {
   overflow: hidden;
+  background: var(--stage);
+  color: var(--color-light);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.88;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--text-display);
+}
+
+h2 {
+  font-size: var(--text-heading);
+}
+
+p,
+ul,
+ol {
+  margin: 0;
+}
+
+.lead {
+  max-width: 28ch;
+  font-size: var(--text-lead);
+  line-height: 1.2;
+}
+
+.muted {
+  color: var(--color-haze);
+}
+
+.frame-name {
+  color: var(--gel);
+  font-weight: 600;
+}
+
+a {
+  color: var(--gel);
+  text-underline-offset: 0.15em;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gel);
+  outline-offset: 4px;
+}
+
+::selection {
+  background: var(--gel);
+  color: var(--stage);
+}
+
+.spotlight {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 30% 35%,
+    color-mix(in srgb, var(--gel) 38%, transparent),
+    transparent 45%
+  );
 }
 
 .slide {
   position: fixed;
   inset: 0;
   display: grid;
-  place-content: center;
-  padding: 6vmin;
+  align-content: center;
+  justify-items: start;
+  gap: var(--space-stack);
+  padding: var(--space-gutter);
   visibility: hidden;
 }
 
@@ -27,11 +159,18 @@ body {
   visibility: visible;
 }
 
+.slide p {
+  max-width: 40ch;
+}
+
 .deck-status {
   position: fixed;
-  right: 2rem;
-  bottom: 1.5rem;
+  right: var(--space-gutter);
+  bottom: calc(var(--space-gutter) / 2);
   margin: 0;
+  color: var(--color-haze);
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .visually-hidden {
