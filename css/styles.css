@@ -135,10 +135,14 @@ a {
 
 .spotlight {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 120vmax;
+  height: 120vmax;
   pointer-events: none;
+  transform: translate(calc(30vw - 50%), calc(35vh - 50%));
   background: radial-gradient(
-    circle at 30% 35%,
+    circle,
     color-mix(in srgb, var(--gel) 38%, transparent),
     transparent 45%
   );
