@@ -197,30 +197,10 @@ h3 {
   font-size: var(--text-body);
 }
 
-.path {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5em 0.6em;
-  padding: 0;
-  list-style: none;
-  font-size: var(--text-lead);
-  line-height: 1.2;
-}
-
-.path li + li::before {
-  content: "";
-  display: inline-block;
-  width: 1.5em;
-  height: 0.1em;
-  margin-right: 0.6em;
-  border-radius: 1em;
-  background: var(--gel);
-  vertical-align: middle;
-}
-
 .frame-list {
   display: grid;
-  gap: 0.6rem;
+  grid-template-columns: auto 1fr;
+  gap: 0.6rem 2rem;
   padding: 0;
   list-style: none;
   font-size: var(--text-lead);
@@ -229,8 +209,8 @@ h3 {
 
 .frame-list li {
   display: grid;
-  grid-template-columns: 5.5em 1fr;
-  gap: 1.5rem;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
   align-items: baseline;
 }
 
@@ -273,31 +253,6 @@ h3 {
   display: block;
 }
 
-.numbered {
-  display: grid;
-  gap: 1.25rem;
-  padding: 0;
-  list-style: none;
-  counter-reset: step;
-  font-size: var(--text-lead);
-  line-height: 1.2;
-}
-
-.numbered li {
-  display: flex;
-  gap: 1.5rem;
-  align-items: baseline;
-  counter-increment: step;
-}
-
-.numbered li::before {
-  content: counter(step);
-  min-width: 1ch;
-  color: var(--gel);
-  font-family: var(--font-display);
-  font-weight: 800;
-}
-
 .price-compare {
   display: flex;
   gap: clamp(2rem, 6vw, 6rem);
@@ -326,7 +281,7 @@ h3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(1.5rem, 4vw, 4rem);
   width: 100%;
-  max-width: 72rem;
+
 }
 
 .arch h3 {
@@ -347,10 +302,10 @@ h3 {
 }
 
 .arch li {
-  padding: 0.4em 0.8em;
+  padding: 0.4em 0.9em;
   border: 2px solid color-mix(in srgb, var(--color-light) 25%, transparent);
   border-radius: 0.5em;
-  font-size: calc(var(--text-body) * 0.8);
+  font-size: calc(var(--text-body) * 0.9);
 }
 
 .arch .is-shared {
@@ -364,4 +319,148 @@ h3 {
   padding: 0;
   list-style: none;
   font-size: var(--text-lead);
+}
+
+/* Career path: a vertical timeline joined by a gel line */
+
+.path {
+  display: grid;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-lead);
+  line-height: 1.2;
+}
+
+.path li {
+  position: relative;
+  padding: 0 0 1.1em 1.6em;
+}
+
+.path li:last-child {
+  padding-bottom: 0;
+}
+
+.path li::before {
+  content: "";
+  position: absolute;
+  top: 0.35em;
+  left: 0;
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: var(--gel);
+}
+
+.path li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 0.95em;
+  bottom: 0.1em;
+  left: 0.22em;
+  width: 0.06em;
+  background: color-mix(in srgb, var(--gel) 50%, transparent);
+}
+
+/* Three decisions: one column each, led by a large numeral */
+
+.numbered {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 4vw, 4rem);
+  width: 100%;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+  font-size: var(--text-lead);
+  line-height: 1.15;
+}
+
+.numbered li {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  padding-top: 1.25rem;
+  border-top: 2px solid color-mix(in srgb, var(--gel) 45%, transparent);
+  counter-increment: step;
+}
+
+.numbered li::before {
+  content: counter(step);
+  color: var(--gel);
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 2rem + 6vw, 9rem);
+  font-weight: 800;
+  line-height: 0.8;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.points--large {
+  gap: 1.5rem;
+  font-size: var(--text-lead);
+  line-height: 1.2;
+}
+
+/* Layouts */
+
+.slide__meta {
+  position: absolute;
+  top: var(--space-gutter);
+  left: var(--space-gutter);
+}
+
+.slide--hero {
+  align-content: end;
+  padding-bottom: calc(var(--space-gutter) * 1.5);
+}
+
+.slide--hero :is(h1, h2) {
+  font-size: clamp(6rem, 1rem + 11vw, 17rem);
+  line-height: 0.82;
+}
+
+.slide--hero p {
+  max-width: none;
+}
+
+.slide--split {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  column-gap: clamp(3rem, 6vw, 8rem);
+  align-items: center;
+}
+
+.slide--split h2 {
+  font-size: clamp(4rem, 1rem + 6.5vw, 10rem);
+}
+
+.slide__intro {
+  display: grid;
+  gap: var(--space-stack);
+}
+
+.slide--statement {
+  align-content: end;
+  padding-bottom: calc(var(--space-gutter) * 1.5);
+}
+
+.slide--statement h2 {
+  max-width: 11ch;
+  font-size: clamp(5rem, 1rem + 9.5vw, 14rem);
+  line-height: 0.82;
+}
+
+.slide__foot {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.slide--numbers .price-compare dd {
+  font-size: clamp(7rem, 2rem + 12vw, 18rem);
+  line-height: 0.85;
 }

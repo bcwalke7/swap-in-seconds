@@ -14,24 +14,27 @@
 <body>
 <div class="spotlight" aria-hidden="true"></div>
 <main class="deck" aria-roledescription="presentation">
-  <section class="slide" id="title" data-gel="house" aria-roledescription="slide" aria-label="Swap in Seconds">
-    <p class="muted">Brandon Walker</p>
+  <section class="slide slide--hero" id="title" data-gel="house" aria-roledescription="slide"
+           aria-label="Swap in Seconds">
+    <p class="slide__meta muted">Brandon Walker</p>
     <h1>Swap in Seconds</h1>
     <p class="muted">Senior Frontend Engineer, Design Systems and Commerce</p>
   </section>
 
-  <section class="slide" id="about" data-gel="house" aria-roledescription="slide" aria-label="About me">
-    <h2>Hi, I'm Brandon</h2>
+  <section class="slide slide--split" id="about" data-gel="house" aria-roledescription="slide" aria-label="About me">
+    <div class="slide__intro">
+      <h2>Hi, I'm Brandon</h2>
+      <p class="muted">Tacoma, Washington</p>
+    </div>
     <ol class="path">
       <li>Theatre</li>
       <li>Superpedestrian</li>
       <li>Two Shopify agencies</li>
       <li>David's Bridal</li>
     </ol>
-    <p class="muted">Tacoma, Washington</p>
   </section>
 
-  <section class="slide" id="frames" data-gel="house" aria-roledescription="slide"
+  <section class="slide slide--split" id="frames" data-gel="house" aria-roledescription="slide"
            aria-label="One base, different frames">
     <h2>One base, different frames</h2>
     <ol class="frame-list">
@@ -43,8 +46,9 @@
     </ol>
   </section>
 
-  <section class="slide" id="solo" data-gel="magenta" aria-roledescription="slide" aria-label="Solo: motion">
-    <p class="frame-name">Solo</p>
+  <section class="slide slide--split" id="solo" data-gel="magenta" aria-roledescription="slide"
+           aria-label="Solo: motion">
+    <p class="slide__meta frame-name">Solo</p>
     <h2>Motion</h2>
     <ul class="points">
       <li><strong>Scroll-based</strong> <span class="muted">Portfolio spotlights and a GSAP scroll study</span></li>
@@ -53,16 +57,19 @@
     </ul>
   </section>
 
-  <section class="slide" id="dreamride" data-gel="amber" aria-roledescription="slide"
+  <section class="slide slide--statement" id="dreamride" data-gel="amber" aria-roledescription="slide"
            aria-label="DreamRide: Sugoi Flower Farm">
-    <p class="frame-name">DreamRide</p>
+    <p class="slide__meta frame-name">DreamRide</p>
     <h2>Sugoi Flower Farm</h2>
-    <p class="lead">The hero is the star.</p>
-    <p class="muted">Brand system, site and theme for a Tacoma flower farm.</p>
+    <div class="slide__foot">
+      <p class="lead">The hero is the star.</p>
+      <p class="muted">Brand system, site and theme for a Tacoma flower farm.</p>
+    </div>
   </section>
 
-  <section class="slide" id="bench" data-gel="teal" aria-roledescription="slide" aria-label="Bench: pricing">
-    <p class="frame-name">Bench</p>
+  <section class="slide slide--numbers" id="bench" data-gel="teal" aria-roledescription="slide"
+           aria-label="Bench: pricing">
+    <p class="slide__meta frame-name">Bench</p>
     <h2>Pricing you can trust</h2>
     <dl class="price-compare">
       <div>
@@ -77,17 +84,20 @@
     <p class="muted">One source of truth for the price and the words.</p>
   </section>
 
-  <section class="slide" id="utility" data-gel="violet" aria-roledescription="slide"
+  <section class="slide slide--statement" id="utility" data-gel="violet" aria-roledescription="slide"
            aria-label="Utility: David's Bridal">
-    <p class="frame-name">Utility</p>
+    <p class="slide__meta frame-name">Utility</p>
     <h2>One dress, one search</h2>
-    <p class="lead">Search should match how people think, not how the database stores it.</p>
+    <div class="slide__foot">
+      <p class="lead">Search should match how people think, not how the database stores it.</p>
+    </div>
   </section>
 
-  <section class="slide" id="test-spin" data-gel="lime" aria-roledescription="slide" aria-label="Test Spin: the brief">
-    <p class="frame-name">Test Spin</p>
+  <section class="slide slide--split" id="test-spin" data-gel="lime" aria-roledescription="slide"
+           aria-label="Test Spin: the brief">
+    <p class="slide__meta frame-name">Test Spin</p>
     <h2>The brief</h2>
-    <ul class="points">
+    <ul class="points points--large">
       <li>A spec panel for product pages</li>
       <li>A highlights section merchants build with</li>
       <li>Reusable snippets</li>
@@ -97,7 +107,7 @@
 
   <section class="slide" id="architecture" data-gel="lime" aria-roledescription="slide"
            aria-label="Test Spin: architecture">
-    <p class="frame-name">Test Spin</p>
+    <p class="slide__meta frame-name">Test Spin</p>
     <h2>How it fits together</h2>
     <div class="arch">
       <div>
@@ -130,7 +140,7 @@
 
   <section class="slide" id="decisions" data-gel="lime" aria-roledescription="slide"
            aria-label="Test Spin: three decisions">
-    <p class="frame-name">Test Spin</p>
+    <p class="slide__meta frame-name">Test Spin</p>
     <h2>Three decisions</h2>
     <ol class="numbered">
       <li>What's data, and what's content</li>
@@ -139,27 +149,28 @@
     </ol>
   </section>
 
-  <section class="slide" id="next" data-gel="lime" aria-roledescription="slide" aria-label="Test Spin: with more time">
-    <p class="frame-name">Test Spin</p>
+  <section class="slide slide--split" id="next" data-gel="lime" aria-roledescription="slide"
+           aria-label="Test Spin: with more time">
+    <p class="slide__meta frame-name">Test Spin</p>
     <h2>With more time</h2>
-    <ul class="points">
+    <ul class="points points--large">
       <li>Specs as metaobjects, edited on each product</li>
       <li>Shoppers choose what to compare</li>
       <li>Shared schema partials</li>
     </ul>
   </section>
 
-  <section class="slide" id="close" data-gel="house" aria-roledescription="slide"
+  <section class="slide slide--split" id="close" data-gel="house" aria-roledescription="slide"
            aria-label="Same base, different frames">
     <h2>Same base, different frames</h2>
-    <ul class="points">
+    <ul class="points points--large">
       <li>Get the data boundary right</li>
       <li>Give people guardrails, not rope</li>
       <li>Prove it works before calling it done</li>
     </ul>
   </section>
 
-  <section class="slide" id="thanks" data-gel="house" aria-roledescription="slide" aria-label="Thank you">
+  <section class="slide slide--hero" id="thanks" data-gel="house" aria-roledescription="slide" aria-label="Thank you">
     <h2>Thank you</h2>
     <ul class="links">
       <li><a href="https://brandonwalker.dev">brandonwalker.dev</a></li>
