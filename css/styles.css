@@ -313,14 +313,6 @@ h3 {
   color: var(--gel);
 }
 
-.links {
-  display: grid;
-  gap: 0.5rem;
-  padding: 0;
-  list-style: none;
-  font-size: var(--text-lead);
-}
-
 /* Career path: a vertical timeline joined by a gel line */
 
 .path {
