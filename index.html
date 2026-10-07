@@ -40,16 +40,21 @@
     <p class="hero__role">Senior Frontend Engineer, Design Systems and Commerce</p>
   </section>
 
-  <section class="slide slide--split" id="about" data-gel="house" aria-roledescription="slide" aria-label="About me">
+  <section class="slide slide--roadmap" id="about" data-gel="house" aria-roledescription="slide" aria-label="About me">
     <div class="slide__intro">
       <h2>Hi, I'm Brandon</h2>
       <p class="muted">Tacoma, Washington</p>
     </div>
-    <ol class="path">
-      <li>Theatre</li>
-      <li>Superpedestrian</li>
-      <li>Two Shopify agencies</li>
-      <li>David's Bridal</li>
+    <svg class="roadmap__road" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path class="roadmap__asphalt" d="M -4 94 C 4 90, 8 86, 12 84 S 24 65, 30 64 S 42 73, 48 72 S 59 58, 66 56 S 80 41, 86 38 S 98 32, 106 28"/>
+      <path class="roadmap__lane" d="M -4 94 C 4 90, 8 86, 12 84 S 24 65, 30 64 S 42 73, 48 72 S 59 58, 66 56 S 80 41, 86 38 S 98 32, 106 28"/>
+    </svg>
+    <ol class="roadmap">
+      <li class="roadmap__stop roadmap__stop--below" style="--x: 12; --y: 84"><span class="roadmap__label">Theatre</span></li>
+      <li class="roadmap__stop" style="--x: 30; --y: 64"><span class="roadmap__label">Superpedestrian</span></li>
+      <li class="roadmap__stop roadmap__stop--below" style="--x: 48; --y: 72"><span class="roadmap__label">Two Shopify agencies</span></li>
+      <li class="roadmap__stop" style="--x: 66; --y: 56"><span class="roadmap__label">David's Bridal</span></li>
+      <li class="roadmap__stop" style="--x: 86; --y: 38"><span class="roadmap__label">ALSO?</span></li>
     </ol>
   </section>
 
@@ -215,6 +220,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
 <script src="js/marquee.js" defer></script>
 <script src="js/motion.js" defer></script>
 <script src="js/deck.js" defer></script>

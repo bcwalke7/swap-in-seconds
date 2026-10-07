@@ -7,6 +7,7 @@
 (() => {
   if (!window.gsap) return;
   if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  if (window.SplitText) gsap.registerPlugin(SplitText);
 
   const root = document.documentElement;
   const spotlight = document.querySelector('.spotlight');
@@ -212,6 +213,36 @@
     }
   }
 
+  // Lock heading line breaks at their resting width. The width animation starts
+  // narrower, and without this a heading can fit on one line, then re-wrap to two.
+  let headingSplits = [];
+
+  function lockHeadingLines() {
+    if (!window.SplitText) return;
+    headingSplits.forEach((split) => split.revert());
+    headingSplits = Array.from(document.querySelectorAll('.slide :is(h1, h2)'), (heading) => {
+      // Measure at rest: set aside any in-progress width, split, then put it back.
+      const inline = heading.style.fontVariationSettings;
+      heading.style.fontVariationSettings = '';
+      const split = SplitText.create(heading, {type: 'lines', linesClass: 'heading-line'});
+      heading.style.fontVariationSettings = inline;
+      return split;
+    });
+  }
+
+  let resizeTimer;
+  document.fonts.ready.then(lockHeadingLines);
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(lockHeadingLines, 200);
+  });
+
+  // Final state of the roadmap, for reduced motion.
+  function showRoadmap(slide) {
+    gsap.set(slide.querySelectorAll('.roadmap__road'), {clearProps: 'clipPath'});
+    gsap.set(slide.querySelectorAll('.roadmap__stop, .roadmap__label'), {clearProps: 'transform,opacity,visibility'});
+  }
+
   const mm = gsap.matchMedia();
 
   mm.add(
@@ -227,7 +258,7 @@
         const {from, to, direction} = event.detail;
         const gel = to.dataset.gel || 'house';
         const parts = to.querySelectorAll(':scope > *');
-        const enterParts = to.querySelectorAll(':scope > :not(.marquee)');
+        const enterParts = to.querySelectorAll(':scope > :not(.marquee, .roadmap, .roadmap__road)');
         const signIn = to.querySelector('.marquee');
         const signOut = from?.querySelector('.marquee');
         const sameSign = signIn && signOut && signIn.textContent === signOut.textContent;
@@ -252,6 +283,7 @@
           gsap.set(root, gelColors(gel));
           gsap.set(spotlight, spotPosition(gel));
           gsap.set(parts, {autoAlpha: 1, y: 0});
+          showRoadmap(to);
           aim();
           return;
         }
@@ -287,6 +319,8 @@
           }
         }
 
+        animateRoadmap(current, to);
+
         current
           .to(root, {...gelColors(gel), duration: 0.8, ease: 'power2.inOut'}, 0)
           .to(spotlight, {...spotPosition(gel), duration: 1.1, ease: 'power2.inOut'}, 0)
@@ -310,6 +344,39 @@
 
       const opensOnTitle = !location.hash || location.hash === '#title';
       if (!reduce && window.ScrollTrigger && opensOnTitle && !intro) startIntro();
+
+      // About: the road grows from left to right and each stop pops up as the road reaches it.
+      // The road only ever moves rightward, so a stop's x position is how far along it is.
+      function animateRoadmap(timeline, slide) {
+        const road = slide.querySelector('.roadmap__road');
+        if (!road) return;
+        const START = 0.3;
+        const DRAW = 2.4;
+
+        timeline
+          .set(slide.querySelector('.roadmap'), {autoAlpha: 1, y: 0}, 0)
+          .fromTo(
+            road,
+            {autoAlpha: 1, y: 0, clipPath: 'inset(0% 100% 0% 0%)'},
+            {clipPath: 'inset(0% 0% 0% 0%)', duration: DRAW, ease: 'none'},
+            START
+          );
+
+        slide.querySelectorAll('.roadmap__stop').forEach((stop) => {
+          const along = Number(stop.style.getPropertyValue('--x')) / 100;
+          const at = START + DRAW * along;
+          const label = stop.querySelector('.roadmap__label');
+          const rise = stop.classList.contains('roadmap__stop--below') ? -12 : 12;
+          timeline
+            .fromTo(
+              stop,
+              {scale: 0, transformOrigin: '0 0'},
+              {scale: 1, duration: 0.5, ease: 'back.out(2.5)'},
+              at
+            )
+            .fromTo(label, {autoAlpha: 0, y: rise}, {autoAlpha: 1, y: 0, duration: 0.4}, at + 0.1);
+        });
+      }
 
       document.addEventListener('deck:change', onChange);
       if (!reduce) gsap.ticker.add(aim);
