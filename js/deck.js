@@ -8,6 +8,8 @@
   const slides = Array.from(document.querySelectorAll('.slide'));
   const currentEl = document.querySelector('[data-deck-current]');
   const totalEl = document.querySelector('[data-deck-total]');
+  const prevButton = document.querySelector('[data-deck-prev]');
+  const nextButton = document.querySelector('[data-deck-next]');
   const announcer = document.querySelector('[data-deck-announcer]');
 
   let index = -1;
@@ -37,6 +39,8 @@
     index = target;
     document.documentElement.dataset.gel = to.dataset.gel || 'house';
     currentEl.textContent = index + 1;
+    prevButton.disabled = index === 0;
+    nextButton.disabled = index === slides.length - 1;
     announcer.textContent = to.getAttribute('aria-label');
     history.replaceState(null, '', `#${to.id}`);
 
@@ -50,6 +54,8 @@
 
   document.addEventListener('keydown', (event) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
+    // A focused button handles its own Space and Enter, so they don't fire twice.
+    if (event.target.closest('button') && (event.key === ' ' || event.key === 'Enter')) return;
 
     if (KEYS_NEXT.includes(event.key)) {
       event.preventDefault();
@@ -65,6 +71,9 @@
       goTo(Number(event.key) - 1);
     }
   });
+
+  prevButton.addEventListener('click', () => goTo(index - 1));
+  nextButton.addEventListener('click', () => goTo(index + 1));
 
   window.addEventListener('hashchange', () => goTo(indexFromHash()));
 

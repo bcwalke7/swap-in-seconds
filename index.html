@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Hanken+Grotesk:wght@400;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Fredoka:wdth,wght@75..125,300..700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -35,7 +35,7 @@
 <main class="deck" aria-roledescription="presentation">
   <section class="slide slide--hero" id="title" data-gel="house" aria-roledescription="slide"
            aria-label="Swap in Seconds">
-    <p class="hero__name">Brandon Walker</p>
+    <p class="hero__name marquee">Brandon Walker</p>
     <h1>Swap in Seconds</h1>
     <p class="hero__role">Senior Frontend Engineer, Design Systems and Commerce</p>
   </section>
@@ -67,7 +67,7 @@
 
   <section class="slide slide--split" id="solo" data-gel="magenta" aria-roledescription="slide"
            aria-label="Solo: motion">
-    <p class="slide__meta frame-name">Solo</p>
+    <p class="slide__meta frame-name marquee">Solo</p>
     <h2>Motion</h2>
     <ul class="points">
       <li><strong>Scroll-based</strong> <span class="muted">Portfolio spotlights and a GSAP scroll study</span></li>
@@ -78,7 +78,7 @@
 
   <section class="slide slide--statement" id="dreamride" data-gel="amber" aria-roledescription="slide"
            aria-label="DreamRide: Sugoi Flower Farm">
-    <p class="slide__meta frame-name">DreamRide</p>
+    <p class="slide__meta frame-name marquee">DreamRide</p>
     <h2>Sugoi Flower Farm</h2>
     <div class="slide__foot">
       <p class="lead">The hero is the star.</p>
@@ -88,7 +88,7 @@
 
   <section class="slide slide--numbers" id="bench" data-gel="teal" aria-roledescription="slide"
            aria-label="Bench: pricing">
-    <p class="slide__meta frame-name">Bench</p>
+    <p class="slide__meta frame-name marquee">Bench</p>
     <h2>Pricing you can trust</h2>
     <dl class="price-compare">
       <div>
@@ -105,7 +105,7 @@
 
   <section class="slide slide--statement" id="utility" data-gel="violet" aria-roledescription="slide"
            aria-label="Utility: David's Bridal">
-    <p class="slide__meta frame-name">Utility</p>
+    <p class="slide__meta frame-name marquee">Utility</p>
     <h2>One dress, one search</h2>
     <div class="slide__foot">
       <p class="lead">Search should match how people think, not how the database stores it.</p>
@@ -114,7 +114,7 @@
 
   <section class="slide slide--split" id="test-spin" data-gel="lime" aria-roledescription="slide"
            aria-label="Test Spin: the brief">
-    <p class="slide__meta frame-name">Test Spin</p>
+    <p class="slide__meta frame-name marquee">Test Spin</p>
     <h2>The brief</h2>
     <ul class="points points--large">
       <li>A spec panel for product pages</li>
@@ -126,7 +126,7 @@
 
   <section class="slide" id="architecture" data-gel="lime" aria-roledescription="slide"
            aria-label="Test Spin: architecture">
-    <p class="slide__meta frame-name">Test Spin</p>
+    <p class="slide__meta frame-name marquee">Test Spin</p>
     <h2>How it fits together</h2>
     <div class="arch">
       <div>
@@ -159,7 +159,7 @@
 
   <section class="slide" id="decisions" data-gel="lime" aria-roledescription="slide"
            aria-label="Test Spin: three decisions">
-    <p class="slide__meta frame-name">Test Spin</p>
+    <p class="slide__meta frame-name marquee">Test Spin</p>
     <h2>Three decisions</h2>
     <ol class="numbered">
       <li>What's data, and what's content</li>
@@ -170,7 +170,7 @@
 
   <section class="slide slide--split" id="next" data-gel="lime" aria-roledescription="slide"
            aria-label="Test Spin: with more time">
-    <p class="slide__meta frame-name">Test Spin</p>
+    <p class="slide__meta frame-name marquee">Test Spin</p>
     <h2>With more time</h2>
     <ul class="points points--large">
       <li>Specs as metaobjects, edited on each product</li>
@@ -200,12 +200,22 @@
   </section>
 </main>
 
-<p class="deck-status" aria-hidden="true">
-  <span data-deck-current>1</span> / <span data-deck-total>13</span>
-</p>
+<nav class="deck-nav" aria-label="Slides">
+  <button class="deck-nav__button" type="button" data-deck-prev aria-label="Previous slide">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg>
+  </button>
+  <p class="deck-status" aria-hidden="true">
+    <span data-deck-current>1</span> / <span data-deck-total>13</span>
+  </p>
+  <button class="deck-nav__button" type="button" data-deck-next aria-label="Next slide">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+  </button>
+</nav>
 <p class="visually-hidden" aria-live="polite" data-deck-announcer></p>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+<script src="js/marquee.js" defer></script>
 <script src="js/motion.js" defer></script>
 <script src="js/deck.js" defer></script>
 </body>

@@ -20,7 +20,7 @@
   --stage: var(--stage-house);
 
   --font-display: "Bricolage Grotesque", system-ui, sans-serif;
-  --font-body: "Hanken Grotesk", system-ui, sans-serif;
+  --font-body: "Fredoka", system-ui, sans-serif;
 
   --text-body: clamp(1.75rem, 1.4rem + 0.9vw, 2.25rem);
   --text-lead: clamp(2.25rem, 1.6rem + 1.6vw, 3.25rem);
@@ -76,6 +76,29 @@ body {
   font-size: var(--text-body);
   line-height: 1.4;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Intro: while the opening plays, the page scrolls over an invisible runway */
+
+html.is-intro,
+html.is-intro body {
+  height: auto;
+}
+
+html.is-intro {
+  scrollbar-width: none;
+}
+
+html.is-intro::-webkit-scrollbar {
+  display: none;
+}
+
+html.is-intro body {
+  overflow: visible;
+}
+
+.intro-runway {
+  height: 400vh;
 }
 
 h1,
@@ -213,10 +236,54 @@ a {
   max-width: 40ch;
 }
 
-.deck-status {
+.deck-nav {
   position: fixed;
-  right: var(--space-gutter);
-  bottom: calc(var(--space-gutter) / 2);
+  right: calc(var(--space-gutter) - 0.75rem);
+  bottom: calc(var(--space-gutter) / 2 - 0.75rem);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.deck-nav__button {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-haze);
+  cursor: pointer;
+}
+
+.deck-nav__button svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.deck-nav__button:hover {
+  background: color-mix(in srgb, var(--gel) 15%, transparent);
+  color: var(--gel);
+}
+
+.deck-nav__button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.deck-nav__button:disabled:hover {
+  background: transparent;
+  color: var(--color-haze);
+}
+
+.deck-status {
   margin: 0;
   color: var(--color-haze);
   font-size: 1.25rem;
@@ -445,6 +512,52 @@ h3 {
   line-height: 1.2;
 }
 
+/* Marquee: a hanging sign with a bulb border, drawn by js/marquee.js */
+
+.marquee {
+  position: relative;
+  isolation: isolate;
+  padding: 0.6em 1.1em 0.65em;
+}
+
+.marquee::before,
+.marquee::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  width: 2px;
+  height: 100vh;
+  background: #3a3545;
+}
+
+.marquee::before {
+  left: 1.25em;
+}
+
+.marquee::after {
+  right: 1.25em;
+}
+
+.marquee__board {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.marquee__panel {
+  fill: #0e0c13;
+  stroke: color-mix(in srgb, var(--color-light) 25%, transparent);
+  stroke-width: 1.5;
+}
+
+.marquee__bulbs {
+  fill: var(--gel);
+  filter: drop-shadow(0 0 3px var(--gel));
+}
+
 /* Layouts */
 
 .slide__meta {
@@ -470,12 +583,13 @@ h3 {
 .slide--hero h1 {
   font-size: clamp(7rem, 1rem + 13vw, 20rem);
   font-variation-settings: "wdth" 85;
+  letter-spacing: -0.02em;
 }
 
 .hero__name {
-  margin-bottom: -0.5rem;
+  margin-bottom: 0.25rem;
   font-size: var(--text-lead);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .hero__role {

@@ -6,6 +6,7 @@
  */
 (() => {
   if (!window.gsap) return;
+  if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
   const root = document.documentElement;
   const spotlight = document.querySelector('.spotlight');
@@ -47,6 +48,9 @@
 
   gsap.set(can, {svgOrigin: `${PIVOT.x} ${PIVOT.y}`});
 
+  // tilt 0 = hanging straight down, 1 = aimed at the spotlight. The intro animates it.
+  const rigState = {tilt: 1};
+
   function aim() {
     const box = rig.getBoundingClientRect();
     const unit = box.width / 120; // screen px per SVG unit
@@ -64,13 +68,150 @@
       `-16,${LENS_Y} 16,${LENS_Y} ${spread},${LENS_Y + reach} ${-spread},${LENS_Y + reach}`
     );
 
-    gsap.set(can, {rotation: angle});
+    gsap.set(can, {rotation: angle * rigState.tilt});
   }
 
   aim();
   window.addEventListener('resize', aim);
 
   let current = null;
+  let leavingSign = null;
+
+  // How far a sign has to rise to sit fully above the top of the screen.
+  function dropDistance(sign) {
+    return sign.offsetTop + sign.offsetHeight + 40;
+  }
+
+  // Intro: the page opens on an empty stage with the light off and pointing down.
+  // Scrolling brings everything on stage. Only runs when the deck opens on the title.
+  const titleSlide = document.querySelector('#title');
+  const deckNav = document.querySelector('.deck-nav');
+  const lens = rig.querySelector('.rig__lens');
+  const INTRO_KEYS_NEXT = ['ArrowRight', 'ArrowDown', 'PageDown', ' '];
+  const INTRO_KEYS_PREV = ['ArrowLeft', 'ArrowUp', 'PageUp'];
+  let intro = null;
+  let motionAllowed = false;
+  const prevButton = document.querySelector('[data-deck-prev]');
+
+  // On the title, the back arrow returns to the preshow instead of being disabled.
+  function preshowAvailable() {
+    return motionAllowed && window.ScrollTrigger && !intro && titleSlide.classList.contains('is-active');
+  }
+
+  function updatePrevButton() {
+    if (preshowAvailable()) prevButton.disabled = false;
+  }
+
+  prevButton.addEventListener(
+    'click',
+    (event) => {
+      if (!preshowAvailable()) return;
+      event.stopImmediatePropagation();
+      startIntro({fromEnd: true});
+    },
+    true
+  );
+
+  function onIntroKey(event) {
+    const step = INTRO_KEYS_NEXT.includes(event.key) ? 1 : INTRO_KEYS_PREV.includes(event.key) ? -1 : 0;
+    if (!step) return;
+    // Keys scroll the intro instead of changing slides until it's finished.
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.scrollBy({top: step * window.innerHeight, behavior: 'smooth'});
+  }
+
+  // fromEnd: start fully lit at the bottom of the runway and scroll back up to the preshow.
+  function startIntro({fromEnd = false} = {}) {
+    const name = titleSlide.querySelector('.marquee');
+    const heading = titleSlide.querySelector('h1');
+    const rest = titleSlide.querySelectorAll(':scope > :not(.marquee, h1)');
+    const runway = document.createElement('div');
+
+    runway.className = 'intro-runway';
+    runway.setAttribute('aria-hidden', 'true');
+    document.body.append(runway);
+    root.classList.add('is-intro');
+    history.scrollRestoration = 'manual';
+    window.scrollTo(0, fromEnd ? document.documentElement.scrollHeight - window.innerHeight : 0);
+    window.addEventListener('keydown', onIntroKey, true);
+
+    gsap.set(heading, {clearProps: 'fontVariationSettings'});
+    const headingWidth = getComputedStyle(heading).fontVariationSettings;
+
+    // Starting from the end counts as "leaving" right away, so only finish
+    // once the scroll has come back up into the intro and down again.
+    let armed = !fromEnd;
+
+    const timeline = gsap.timeline({
+      defaults: {ease: 'none'},
+      scrollTrigger: {
+        start: 0,
+        end: 'max',
+        scrub: 1,
+        onEnterBack: () => {
+          armed = true;
+        },
+        onLeave: () => {
+          if (armed) finishIntro();
+        },
+      },
+    })
+      // Power on: the lens warms up and the beam hits the floor.
+      .fromTo(lens, {opacity: 0.15}, {opacity: 1, duration: 1, ease: 'power2.in'}, 0)
+      .fromTo(beam, {autoAlpha: 0}, {autoAlpha: 1, duration: 1, ease: 'power2.in'}, 0.2)
+      // Tilt up to find the mark, and the gel pool fades up where it lands.
+      .fromTo(rigState, {tilt: 0}, {tilt: 1, duration: 1.6, ease: 'power2.inOut'}, 1.2)
+      .fromTo(spotlight, {autoAlpha: 0}, {autoAlpha: 1, duration: 1.2}, 1.9)
+      // The sign drops in, then the title and role.
+      .fromTo(
+        name,
+        {y: () => -dropDistance(name)},
+        {y: 0, duration: 1.2, ease: 'back.out(1.4)'},
+        2.8
+      )
+      .fromTo(
+        heading,
+        {autoAlpha: 0, y: 40, fontVariationSettings: '"wdth" 75'},
+        {autoAlpha: 1, y: 0, fontVariationSettings: headingWidth, duration: 1.2, ease: 'power3.out'},
+        3.6
+      )
+      .fromTo(rest, {autoAlpha: 0, y: 30}, {autoAlpha: 1, y: 0, duration: 1, ease: 'power3.out'}, 4.4)
+      .fromTo(deckNav, {autoAlpha: 0}, {autoAlpha: 1, duration: 0.6}, 5);
+
+    intro = {timeline, runway};
+
+    if (fromEnd) {
+      timeline.progress(1);
+      requestAnimationFrame(() => window.scrollTo({top: 0, behavior: 'smooth'}));
+    }
+  }
+
+  // Ends the intro: snaps or eases to the final frame, then removes the scroll runway.
+  function finishIntro(instant = false) {
+    if (!intro) return;
+    const {timeline, runway} = intro;
+    intro = null;
+
+    window.removeEventListener('keydown', onIntroKey, true);
+    // kill(revert, allowAnimation): keep the timeline where it is instead of resetting it.
+    timeline.scrollTrigger.kill(false, true);
+
+    function cleanUp() {
+      runway.remove();
+      root.classList.remove('is-intro');
+      window.scrollTo(0, 0);
+      updatePrevButton();
+    }
+
+    if (instant) {
+      timeline.progress(1);
+      cleanUp();
+    } else {
+      gsap.to(timeline, {progress: 1, duration: 0.4, ease: 'power1.out', onComplete: cleanUp});
+    }
+  }
+
   const mm = gsap.matchMedia();
 
   mm.add(
@@ -80,14 +221,26 @@
     },
     (context) => {
       const {reduce} = context.conditions;
+      motionAllowed = !reduce;
 
       function onChange(event) {
-        const {to, direction} = event.detail;
+        const {from, to, direction} = event.detail;
         const gel = to.dataset.gel || 'house';
         const parts = to.querySelectorAll(':scope > *');
+        const enterParts = to.querySelectorAll(':scope > :not(.marquee)');
+        const signIn = to.querySelector('.marquee');
+        const signOut = from?.querySelector('.marquee');
+        const sameSign = signIn && signOut && signIn.textContent === signOut.textContent;
         const headings = to.querySelectorAll('h1, h2');
 
+        // During the intro the title belongs to the scroll timeline.
+        if (intro && to === titleSlide) return;
+        if (intro) finishIntro(true);
+        updatePrevButton();
+
         if (current) current.kill();
+        if (leavingSign) gsap.set(leavingSign, {clearProps: 'visibility'});
+        leavingSign = null;
 
         gsap.set(headings, {clearProps: 'fontVariationSettings'});
         const restingWidths = Array.from(headings, (heading) => {
@@ -103,11 +256,42 @@
           return;
         }
 
-        current = gsap.timeline({defaults: {ease: 'power3.out'}})
+        current = gsap.timeline({defaults: {ease: 'power3.out'}});
+
+        // Marquee: the old sign flies up and the new one drops in on its cables.
+        // Consecutive slides with the same sign (Test Spin) keep it hanging still.
+        if (sameSign) {
+          gsap.set(signIn, {autoAlpha: 1, y: 0, rotation: 0});
+        } else {
+          if (signOut) {
+            leavingSign = signOut;
+            current
+              .set(signOut, {visibility: 'visible'}, 0)
+              .to(signOut, {y: () => -dropDistance(signOut), duration: 0.45, ease: 'power2.in'}, 0)
+              .set(signOut, {clearProps: 'visibility'});
+          }
+          if (signIn) {
+            current
+              .fromTo(
+                signIn,
+                {autoAlpha: 1, y: () => -dropDistance(signIn)},
+                {y: 0, duration: 0.9, ease: 'back.out(1.4)'},
+                signOut ? 0.35 : 0.15
+              )
+              .fromTo(
+                signIn,
+                {rotation: -4, transformOrigin: '50% 0'},
+                {rotation: 0, duration: 1.4, ease: 'elastic.out(1, 0.4)'},
+                '<0.5'
+              );
+          }
+        }
+
+        current
           .to(root, {...gelColors(gel), duration: 0.8, ease: 'power2.inOut'}, 0)
           .to(spotlight, {...spotPosition(gel), duration: 1.1, ease: 'power2.inOut'}, 0)
           .fromTo(
-            parts,
+            enterParts,
             {autoAlpha: 0, y: 40 * direction},
             {autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.08},
             0.15
@@ -124,12 +308,16 @@
           );
       }
 
+      const opensOnTitle = !location.hash || location.hash === '#title';
+      if (!reduce && window.ScrollTrigger && opensOnTitle && !intro) startIntro();
+
       document.addEventListener('deck:change', onChange);
       if (!reduce) gsap.ticker.add(aim);
 
       return () => {
         document.removeEventListener('deck:change', onChange);
         gsap.ticker.remove(aim);
+        finishIntro(true);
       };
     }
   );
