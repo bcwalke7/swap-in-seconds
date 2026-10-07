@@ -57,6 +57,12 @@
 
         if (current) current.kill();
 
+        gsap.set(headings, {clearProps: 'fontVariationSettings'});
+        const restingWidths = Array.from(headings, (heading) => {
+          const value = getComputedStyle(heading).fontVariationSettings;
+          return value === 'normal' ? '"wdth" 100' : value;
+        });
+
         if (reduce) {
           gsap.set(root, gelColors(gel));
           gsap.set(spotlight, spotPosition(gel));
@@ -76,7 +82,11 @@
           .fromTo(
             headings,
             {fontVariationSettings: '"wdth" 75'},
-            {fontVariationSettings: '"wdth" 100', duration: 1, ease: 'power2.out'},
+            {
+              fontVariationSettings: (i) => restingWidths[i],
+              duration: 1,
+              ease: 'power2.out',
+            },
             0.15
           );
       }
