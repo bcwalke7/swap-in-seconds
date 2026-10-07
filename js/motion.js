@@ -38,6 +38,38 @@
 
   gsap.set(spotlight, {xPercent: -50, yPercent: -50, ...spotPosition('house')});
 
+  // Stage rig: the can rotates around its yoke bolt to aim at the spotlight.
+  const rig = document.querySelector('.rig');
+  const can = rig.querySelector('.rig__can');
+  const beam = rig.querySelector('.rig__beam');
+  const PIVOT = {x: 0, y: 74}; // yoke bolt, in the SVG's own units
+  const LENS_Y = 118; // where the beam leaves the lens
+
+  gsap.set(can, {svgOrigin: `${PIVOT.x} ${PIVOT.y}`});
+
+  function aim() {
+    const box = rig.getBoundingClientRect();
+    const unit = box.width / 120; // screen px per SVG unit
+    const pivotX = box.left + box.width / 2;
+    const pivotY = box.top + PIVOT.y * unit;
+    const dx = gsap.getProperty(spotlight, 'x') - pivotX;
+    const dy = gsap.getProperty(spotlight, 'y') - pivotY;
+
+    // The can is drawn pointing straight down, which is 90 degrees.
+    const angle = (Math.atan2(dy, dx) * 180) / Math.PI - 90;
+    const reach = Math.hypot(dx, dy) / unit - (LENS_Y - PIVOT.y);
+    const spread = reach * 0.28;
+    beam.setAttribute(
+      'points',
+      `-16,${LENS_Y} 16,${LENS_Y} ${spread},${LENS_Y + reach} ${-spread},${LENS_Y + reach}`
+    );
+
+    gsap.set(can, {rotation: angle});
+  }
+
+  aim();
+  window.addEventListener('resize', aim);
+
   let current = null;
   const mm = gsap.matchMedia();
 
@@ -67,6 +99,7 @@
           gsap.set(root, gelColors(gel));
           gsap.set(spotlight, spotPosition(gel));
           gsap.set(parts, {autoAlpha: 1, y: 0});
+          aim();
           return;
         }
 
@@ -92,7 +125,12 @@
       }
 
       document.addEventListener('deck:change', onChange);
-      return () => document.removeEventListener('deck:change', onChange);
+      if (!reduce) gsap.ticker.add(aim);
+
+      return () => {
+        document.removeEventListener('deck:change', onChange);
+        gsap.ticker.remove(aim);
+      };
     }
   );
 })();

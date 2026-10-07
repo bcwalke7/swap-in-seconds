@@ -148,6 +148,52 @@ a {
   );
 }
 
+/* Stage rig: a can light that hangs from a pipe and aims at the spotlight */
+
+.rig {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  width: clamp(7rem, 10vw, 11rem);
+  overflow: visible;
+  translate: -50% 0;
+  pointer-events: none;
+}
+
+.rig__pipe {
+  fill: #2a2633;
+}
+
+.rig__metal {
+  fill: #3a3545;
+}
+
+.rig__yoke {
+  fill: none;
+  stroke: #3a3545;
+  stroke-width: 6;
+  stroke-linejoin: round;
+}
+
+.rig__body {
+  fill: #0e0c13;
+  stroke: color-mix(in srgb, var(--color-light) 25%, transparent);
+  stroke-width: 1.5;
+}
+
+.rig__lens {
+  fill: var(--gel);
+}
+
+.rig__beam {
+  fill: url(#beam-fade);
+  mix-blend-mode: screen;
+}
+
+.rig__beam-stop {
+  stop-color: var(--gel);
+}
+
 .slide {
   position: fixed;
   inset: 0;
