@@ -270,6 +270,7 @@
         updatePrevButton();
 
         if (current) current.kill();
+        gsap.set(to.querySelectorAll('[data-step]'), {clearProps: 'opacity,visibility,transform'});
         if (leavingSign) gsap.set(leavingSign, {clearProps: 'visibility'});
         leavingSign = null;
 
@@ -378,11 +379,48 @@
         });
       }
 
+      // A step pops in and the spotlight swings onto it, so the light follows the talk.
+      // Hiding a step sends the light back to the last one showing, or to the slide's mark.
+      function onStep(event) {
+        const {slide, step, shown} = event.detail;
+        if (reduce) {
+          gsap.set(step, {clearProps: 'opacity,visibility,transform'});
+          return;
+        }
+
+        if (shown) {
+          gsap.fromTo(
+            step,
+            {autoAlpha: 0, x: -24, scale: 0.96},
+            {autoAlpha: 1, x: 0, scale: 1, duration: 0.55, ease: 'back.out(1.6)', overwrite: 'auto'}
+          );
+        } else {
+          gsap.to(step, {
+            autoAlpha: 0,
+            x: -12,
+            duration: 0.25,
+            ease: 'power2.in',
+            overwrite: 'auto',
+            onComplete: () => gsap.set(step, {clearProps: 'opacity,visibility,transform'}),
+          });
+        }
+
+        const lit = shown ? step : Array.from(slide.querySelectorAll('[data-step].is-shown')).pop();
+        let target = spotPosition(slide.dataset.gel || 'house');
+        if (lit) {
+          const box = lit.getBoundingClientRect();
+          target = {x: box.left + box.width / 2, y: box.top + box.height / 2};
+        }
+        gsap.to(spotlight, {...target, duration: 0.9, ease: 'power2.inOut', overwrite: 'auto'});
+      }
+
       document.addEventListener('deck:change', onChange);
+      document.addEventListener('deck:step', onStep);
       if (!reduce) gsap.ticker.add(aim);
 
       return () => {
         document.removeEventListener('deck:change', onChange);
+        document.removeEventListener('deck:step', onStep);
         gsap.ticker.remove(aim);
         finishIntro(true);
       };

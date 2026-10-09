@@ -13,6 +13,18 @@
   const announcer = document.querySelector('[data-deck-announcer]');
 
   let index = -1;
+  let shown = 0; // how many of the active slide's steps are revealed
+
+  // Steps: parts of a slide marked data-step, revealed one at a time before moving on.
+  function stepsOf(slide) {
+    return slide.querySelectorAll('[data-step]');
+  }
+
+  function updateButtons() {
+    const total = stepsOf(slides[index]).length;
+    prevButton.disabled = index === 0 && shown === 0;
+    nextButton.disabled = index === slides.length - 1 && shown === total;
+  }
 
   totalEl.textContent = slides.length;
 
@@ -36,17 +48,52 @@
       slide.inert = !isActive;
     });
 
+    // Arriving forward starts with every step hidden; arriving backward shows them all.
+    const steps = stepsOf(to);
+    const showAll = direction < 0;
+    steps.forEach((step) => step.classList.toggle('is-shown', showAll));
+    shown = showAll ? steps.length : 0;
+
     index = target;
     document.documentElement.dataset.gel = to.dataset.gel || 'house';
     currentEl.textContent = index + 1;
-    prevButton.disabled = index === 0;
-    nextButton.disabled = index === slides.length - 1;
+    updateButtons();
     announcer.textContent = to.getAttribute('aria-label');
     history.replaceState(null, '', `#${to.id}`);
 
     document.dispatchEvent(
       new CustomEvent('deck:change', {detail: {from, to, direction}})
     );
+  }
+
+  function setStep(step, isShown) {
+    step.classList.toggle('is-shown', isShown);
+    if (isShown) announcer.textContent = step.textContent.replace(/\s+/g, ' ').trim();
+    updateButtons();
+    document.dispatchEvent(
+      new CustomEvent('deck:step', {detail: {slide: slides[index], step, shown: isShown}})
+    );
+  }
+
+  // Next reveals the slide's next step, or moves on once they're all showing.
+  function next() {
+    const steps = stepsOf(slides[index]);
+    if (shown < steps.length) {
+      shown += 1;
+      setStep(steps[shown - 1], true);
+    } else {
+      goTo(index + 1);
+    }
+  }
+
+  // Back hides the last revealed step, or goes to the previous slide.
+  function prev() {
+    if (shown > 0) {
+      shown -= 1;
+      setStep(stepsOf(slides[index])[shown], false);
+    } else {
+      goTo(index - 1);
+    }
   }
 
   const KEYS_NEXT = ['ArrowRight', 'ArrowDown', 'PageDown', ' '];
@@ -59,10 +106,10 @@
 
     if (KEYS_NEXT.includes(event.key)) {
       event.preventDefault();
-      goTo(index + 1);
+      next();
     } else if (KEYS_PREV.includes(event.key)) {
       event.preventDefault();
-      goTo(index - 1);
+      prev();
     } else if (event.key === 'Home') {
       goTo(0);
     } else if (event.key === 'End') {
@@ -72,8 +119,8 @@
     }
   });
 
-  prevButton.addEventListener('click', () => goTo(index - 1));
-  nextButton.addEventListener('click', () => goTo(index + 1));
+  prevButton.addEventListener('click', prev);
+  nextButton.addEventListener('click', next);
 
   window.addEventListener('hashchange', () => goTo(indexFromHash()));
 

@@ -593,6 +593,12 @@ h3 {
   stroke-linejoin: round;
 }
 
+/* Steps: hidden until the presenter reveals them (js/deck.js) */
+.slide [data-step]:not(.is-shown) {
+  visibility: hidden;
+  opacity: 0;
+}
+
 /* Marquee: a hanging sign with a bulb border, drawn by js/marquee.js */
 
 .marquee {
@@ -619,6 +625,15 @@ h3 {
   right: 1.25em;
 }
 
+.marquee__sub {
+  display: block;
+  margin-top: 0.15em;
+  color: var(--color-light);
+  font-size: 0.55em;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
 .marquee__board {
   position: absolute;
   inset: 0;
@@ -637,6 +652,11 @@ h3 {
 .marquee__bulbs {
   fill: var(--gel);
   filter: drop-shadow(0 0 3px var(--gel));
+}
+
+/* Slides with a hanging sign keep their content clear of it */
+.slide:has(> .slide__meta) {
+  padding-top: calc(var(--space-gutter) + var(--text-body) * 3.5 + 1.5rem);
 }
 
 /* Layouts */
