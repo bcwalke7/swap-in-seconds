@@ -11,6 +11,7 @@
   const prevButton = document.querySelector('[data-deck-prev]');
   const nextButton = document.querySelector('[data-deck-next]');
   const announcer = document.querySelector('[data-deck-announcer]');
+  const stepsEl = document.querySelector('[data-deck-steps]');
 
   let index = -1;
   let shown = 0; // how many of the active slide's steps are revealed
@@ -22,6 +23,13 @@
 
   function updateButtons() {
     const total = stepsOf(slides[index]).length;
+
+    // One pip per step: filled = revealed. All filled means the next click changes slides.
+    stepsEl.innerHTML = Array.from({length: total}, (_, i) =>
+      `<span class="deck-steps__pip${i < shown ? ' is-on' : ''}"></span>`
+    ).join('');
+    stepsEl.classList.toggle('is-done', total > 0 && shown === total);
+
     prevButton.disabled = index === 0 && shown === 0;
     nextButton.disabled = index === slides.length - 1 && shown === total;
   }

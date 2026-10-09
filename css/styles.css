@@ -283,6 +283,34 @@ a {
   color: var(--color-haze);
 }
 
+.deck-steps {
+  display: flex;
+  gap: 0.35rem;
+  margin-inline-start: 0.35rem;
+}
+
+.deck-steps:empty {
+  display: none;
+}
+
+.deck-steps__pip {
+  width: 0.6rem;
+  height: 0.6rem;
+  border: 2px solid var(--color-haze);
+  border-radius: 50%;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.deck-steps__pip.is-on {
+  border-color: var(--gel);
+  background: var(--gel);
+}
+
+/* Every step revealed: the pips glow, so the next click changes slides */
+.deck-steps.is-done .deck-steps__pip {
+  box-shadow: 0 0 0.5rem var(--gel);
+}
+
 .deck-status {
   margin: 0;
   color: var(--color-haze);
